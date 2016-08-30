@@ -85,6 +85,7 @@ function createConnection(opts) {
   stream.setNoDelay();
 
   stream.on('error', function(err) {
+      console.log ('TEST ERROR ')
     // forward network and stream errors
     self.emit('error', err);
   });
