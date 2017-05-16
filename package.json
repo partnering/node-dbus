@@ -1,7 +1,7 @@
 {
   "name": "dbus-native",
   "author": "Andrey Sidorov <sidorares@yandex.com>",
-  "version": "0.2.0",
+  "version": "1.1.2",
   "keywords": [
     "dbus",
     "dcop",
@@ -19,8 +19,8 @@
   "main": "index.js",
   "maintainers": [
     {
-      "name": "Andrey Sidorov",
-      "email": "sidoares@yandex.ru"
+      "name": "Nicolas SCHOEMAEKER",
+      "email": "nicolas.schoemaeker@partnering.fr"
     }
   ],
   "license": "MIT",
