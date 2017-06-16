@@ -184,6 +184,7 @@ let type = {}
 
 type.DBUS_BYTE = signature.DBUS_BYTE
 type.DBUS_BOOL = signature.DBUS_BOOL
+type.DBUS_BOOLEAN = signature.DBUS_BOOL // For convenience, because I keep wondering whether it's 'BOOL' or 'BOOLEAN'!
 type.DBUS_INT16 = signature.DBUS_INT16
 type.DBUS_UINT16 = signature.DBUS_UINT16
 type.DBUS_INT32 = signature.DBUS_INT32
