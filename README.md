@@ -65,7 +65,13 @@ Lots of examples can be found in the `example/` directory. Each example is heavi
 Here are the list with the demonstrated usage case:
 
 - 1-SimpleService
-    - Shows the most basic usage
+    - Shows the most basic usage of the library
+    - Shows how to define an interface, and object path and how to expose a service
+    - Shows how to declare a DBus method, a DBus property and a DBus signal
+    - Shows how to emit a signal
+- 2-TypesOverview
+    - Defines only methods
+    - Give a nice overview of the different DBus types, how to combine them and how to use them in Javascript
 
 Usage
 ------
