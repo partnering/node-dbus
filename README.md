@@ -76,7 +76,11 @@ Here are the list with the demonstrated usage case:
     - Shows how to use `DBusProxy` to make a proxy on another DBus service, in order to make method calls, get and set properties and listen to signals
     - `server/` contains the "server" DBus service, the one which which will be queries by the DBus client in `client/`
     - `client/` contains the DBus "client", which will make a proxy to `server/` and call its methods, query its properties and listen for its signals.
-    - Note that in this simple example, the client is merely a client, _i.e._ it connects to the bus, does **not** request a service name, makes a proxy to the server and that's all. But in real-world applications, a service A can also be a client and query a service B.
+    - Note that in this simple example, the client is merely a client, _i.e._ it connects to the bus, does **not** request a service name, makes a proxy to the server and that's all. But in real-world applications, a service A can also be a client and query a service B
+- 4-PhoneBook
+    - Shows how to manipulate DBusObjects (and object paths), namely, add a new Object and remove it
+    - Namely, when a new contact is created, a new ObjectPath is created and the proxy using it is automatically updated
+    - Same for when a contact is destroyed
 
 Usage
 ------

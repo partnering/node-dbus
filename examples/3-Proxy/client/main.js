@@ -33,7 +33,7 @@ function proceed() {
 	*/
 	proxy.on('connected', _ => {
 		/*
-			The API was designed so that it is as transparent as possible, namely it ressembles traidtional Javascript.
+			The API was designed so that it is as transparent as possible, namely it ressembles traditional Javascript.
 			When you have a DBusProxy object (returned by `mkProxy()`), you can traverse it the in the same way the
 			service's architecture is organized.
 			All DBusProxy have a root object accessible at '/'. Then it's dependent of the organization of the service.
