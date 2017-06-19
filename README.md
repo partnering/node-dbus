@@ -72,6 +72,11 @@ Here are the list with the demonstrated usage case:
 - 2-TypesOverview
     - Defines only methods
     - Give a nice overview of the different DBus types, how to combine them and how to use them in Javascript
+- 3-Proxy
+    - Shows how to use `DBusProxy` to make a proxy on another DBus service, in order to make method calls, get and set properties and listen to signals
+    - `server/` contains the "server" DBus service, the one which which will be queries by the DBus client in `client/`
+    - `client/` contains the DBus "client", which will make a proxy to `server/` and call its methods, query its properties and listen for its signals.
+    - Note that in this simple example, the client is merely a client, _i.e._ it connects to the bus, does **not** request a service name, makes a proxy to the server and that's all. But in real-world applications, a service A can also be a client and query a service B.
 
 Usage
 ------

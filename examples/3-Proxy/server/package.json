@@ -1,7 +1,7 @@
 {
-  "name": "2-typesoverview",
+  "name": "3-proxy",
   "version": "1.0.0",
-  "description": "Defines functions with a various combinations of the DBus types",
+  "description": "Shows how to create proxies to other DBus services to interact with them",
   "main": "main.js",
   "author": "",
   "scripts": {
@@ -10,6 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "bluebird": "3.5.0",
-    "dbus-native": "../../"
+    "dbus-native": "../../../"
   }
 }
