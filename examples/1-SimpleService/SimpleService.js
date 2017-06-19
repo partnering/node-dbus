@@ -1,6 +1,6 @@
 'use strict';
 
-const dbus    = require ('../../index.js')
+const dbus    = require ('dbus-native')
 const inspect = require ('util').inspect
 const Promise = require ('bluebird')
 
@@ -17,40 +17,69 @@ const DBusInterface = DBusInterfaceLibs.DBusInterface
 
 /**
  * @class
- * Very simple class that is intended to be the first example people see of how to use the dbus-native library.
- * It provides with minimal code, syntax and one example of each: a method, a property and a signal.
+ * The SimpleService example is just here to demonstrate the basic usage of the library.<br>
+ * It shows how to create an interface, a main object path and expose them through a service on the (session) bus.
  */
 class SimpleService extends DBusInterface {
 	constructor (...args) {
+		/*
+			At a bare minimum (i.d. if you don't need any additional information) you need to pass the interface name
+			to the constructor of an interface.
+			If you need to pass some other argument that make sense to you only, change this line to
+			`constructor (ifaceName, otherArg1, otherArg2)` and the live just below by: `super(ifaceName)`.
+			Then do whatever you want with the other arguments
+		*/
 		super (...args)
 
 		/*
-			Here we define our service's properties. They are defined as normal, Javascript properties.
-			Note that we can also define properties here that WILL NOT be exposed as a DBus property; only properties
-			that are annotated with DBusProperty() will be part of the DBus API.
-			This allows to define normal, internal properties that won't be visible to the outside.
+			Here comes the definition of the DBusProperties that your interface has.
+			Make sure to always specify a starting value as DBus doesn't allow properties without a value.
+			Note that it's still valid Javascript code, so you can obviously define whatever properties you want here,
+			they won't be exposed on the bus unless you call `DBusProperty()` on then (see end of file).
+			Please keep in mind that the DBus convetnion is for exposed properties to be "CamelCase" (not the first letter also being capital). So in order to avoid confusion, it's best if you define your own, internal attributes with a leading underscore ('_') and don't capitalize the first letter, such as '_internalAttribute'.
 		*/
 
 		/**
-		 * Simple property of type string, that is modifiable.
-		 * @type {string}
+		 * The ExampleProperty is just an example how to get a number (more specifically an unsigned int 16 integers)
+		 * @type {Number}
 		 */
-		this.Name = 'Initial string'
+		this.ExampleProperty = 1089
+
+
+		/*
+			Signal which tells when this Interface will actually be exposed on the bus by the service.
+			Since interfaces are created separately, then added to objects in services, if some functions
+			in the interface need to make DBus proxies (or make other DBus calls), they need to know when they have
+			access to the bus.
+			This is where this signal comes handy. A reference to the DBusService that exposed this interface
+			is passed as an argument, the interface can use it to make function calls to other methods in the service,
+			or use the service's DBus connection.
+		*/
+		this.on ('ExposedOnBus', service => {
+			/*
+				'service' is an instance of DBusService
+				'service.bus' is a reference to the bus, use 'service.bus.mkProxy()' to create a DBusProxy if you need
+			*/
+			console.log('Interface is not exposed on the bus, ready to receive DBus method call!')
+		})
 	}
 
 	/*
-		Here we define the methods of the DBus service. They are defined as normal, Javascript methods.
-		Note that we can also define methods here that WILL NOT be exposed as a DBus method; only methods that are
-		annotated with DBusMethod() will be part of the DBus API.
-		This allows to define normal, internal methods that won't be visible to the outside.
+		Here comes the definitions of the DBusMethods that this interface implements.
+		Make sure that they return value matches the type you declared in 'DBusMethod()' (see end of file).
+		Note that the DBus convention is to have methods named in 'CamelCase()' style (note the leading letter being capitalized) ; this is the same convention for properties.
+		Note that you can obviously define your own internla methods here, and they won't be exposed on the bus unless you call 'DBusMethod()' on them (see end of file). Just as with properties, it's best if you name your own internal methods with a leading underscore ('_') and do not capitalize the first letter, as such: `_internalMethod()`
 	*/
 
 	/**
-	 * Simple method that returns the current date, pretty-printed (as a string).
-	 * @returns {string} Current date
+	 * Just a function "hello world" function that takes an argument and answer "hello" to the named argument.
 	 */
-	Hello () {
-		return new Date().toString()
+	SayHello (who) {
+		if (who === '') {
+			return 'Hello, world!'
+		} else {
+			return `Hello, ${who}!`
+		}
 	}
 }
 
@@ -63,14 +92,17 @@ class SimpleService extends DBusInterface {
 */
 
 /*
-	Annotates the method 'Hello' to make it part of the DBus API.
-	We specify its name, and its signature (input and output type)
+	This is how we declare methods to be exposed on the bus. If you dont call `DBusMethod()` on a function, it stays an internal function and no other service or people will see it on the bus.
+
+	See the README file for the full explanation about DBusMethod()
 */
-DBusMethod (SimpleService, 'Hello', {
+
+DBusMethod (SimpleService, 'SayHello', {
 	input: [
+		{who: t.DBUS_STRING},
 	],
 	output: [
-		{hello_str: t.DBUS_STRING},
+		{hello_sentence: t.DBUS_STRING},
 	],
 })
 
@@ -82,13 +114,14 @@ DBusMethod (SimpleService, 'Hello', {
 |_|   |_|  \___/| .__/ \___|_|   \__|_|\___||___/
                 |_|
 */
-
 /*
-	Annotates the property 'Name' to make it part of the DBus API.
-	We specify its name and its signature (type)
+	This is how we declare properties to be exposed on the bus. If you dont call `DBusProperty()` on an attribute, it stays an internal attribute and no other service or people will see it on the bus.
+
+	See the README file for the full explanation about DBusProperty()
 */
-DBusProperty (SimpleService, 'Name', {
-	readwrite: t.DBUS_STRING
+
+DBusProperty (SimpleService, 'ExampleProperty', {
+	readwrite: t.DBUS_UINT16
 })
 
 /*
@@ -101,15 +134,14 @@ DBusProperty (SimpleService, 'Name', {
 */
 
 /*
-	Annotates the signal 'Tick' to make it part of the DBus API.
-	We specify its name and its signature (output type)
-	Note that the signal itself doesn't appear anywhere in the definition of the class, it's because the class
-	is an EventEmitter and you just need to call .emit ('Tick', arg1, arg2, ...) to emit the signal.
-	See main.js associated main.js file to see an example.
+	This is how we declare signals to be exposed on the bus. If you dont call `DBusSignal()` on an event, it stays an internal event and no other service or people will see it on the bus.
+
+	See the README file for the full explanation about DBusSignal()
 */
-DBusSignal (SimpleService, 'Tick', {
+
+DBusSignal (SimpleService, 'Random', {
 	output: [
-		{number: t.DBUS_UINT16},
+		{random_number: t.DBUS_INT16},
 	],
 })
 
